@@ -56,16 +56,28 @@ public class SpeedToggle extends JavaPlugin implements Listener {
         return regions.getFirst();
     }
 
+    PotionEffect superspeed = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 10);
+
+    public void removePotionEffect(Player p) {
+        for (PotionEffect e : p.getActivePotionEffects()) {
+            /*if (e.getType() == superspeed.getType()
+                    && e.getAmplifier() == superspeed.getAmplifier()) {*/
+                p.removePotionEffect(e.getType());
+            //}
+        }
+        if (getRegionName(p, p.getLocation()).equals("city")) {
+            p.sendMessage(ChatColor.RED + "Your super speed effect was removed because it can only be used in the mall.");
+        }
+    }
+
     @EventHandler
     public void disableSpeed(PlayerMoveEvent e) { //disable effect if player steps out of the mall
         Player p = e.getPlayer();
-        Location l = p.getLocation();
 
         if (getRegionName(p, e.getFrom()).equals("mall")
                 && getRegionName(p, e.getTo()).equals("city")
                 && p.hasPotionEffect(PotionEffectType.SPEED)) {
-            p.removePotionEffect(PotionEffectType.SPEED);
-            p.sendMessage(ChatColor.RED + "Your super speed effect was removed because it can only be used in the mall.");
+            removePotionEffect(p);
         }
     }
 
@@ -76,13 +88,25 @@ public class SpeedToggle extends JavaPlugin implements Listener {
             if (!(getRegionName(p, p.getLocation()).equals("mall"))) {
                 p.sendMessage(ChatColor.RED + "The superspeed command can only be used in the mall!");
                 return false;
-            } else {
-                if (p.hasPotionEffect(PotionEffectType.SPEED)) {
-                    p.removePotionEffect(PotionEffectType.SPEED);
-                    p.sendMessage(ChatColor.GREEN + "You are no longer going super speedy!");
-                } else {
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 10));
+            } else { /*
+                for (PotionEffect e : p.getActivePotionEffects()) {
+                    if (e.getType() == superspeed.getType()
+                            && e.getAmplifier() == superspeed.getAmplifier()) {
+                        p.removePotionEffect(e.getType());
+                        p.sendMessage(ChatColor.GREEN + "You are no longer going super speedy!");
+                    }
+                    else {
+                        p.addPotionEffect(superspeed);
+                        p.sendMessage(ChatColor.GREEN + "You are now going super speedy!");
+                        break;
+                    }
+                }*/
+                if (!(p.getActivePotionEffects().contains(superspeed))) {
+                    p.addPotionEffect(superspeed);
                     p.sendMessage(ChatColor.GREEN + "You are now going super speedy!");
+                }
+                else {
+                    removePotionEffect(p);
                 }
             }
         }
