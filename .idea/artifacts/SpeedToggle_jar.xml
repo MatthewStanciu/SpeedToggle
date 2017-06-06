@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="SpeedToggle:jar">
+    <output-path>$USER_HOME$/Downloads</output-path>
+    <root id="archive" name="SpeedToggle.jar">
+      <element id="module-output" name="SpeedToggle" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/com/hektropolis/SpeedToggle/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/com/hektropolis/SpeedToggle/SpeedToggle.java" />
+    </root>
+  </artifact>
+</component>

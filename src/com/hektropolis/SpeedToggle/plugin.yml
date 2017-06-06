@@ -1,0 +1,10 @@
+name: SpeedToggle
+author: TechBug2012
+description: Toggle superspeed for better navigating the mall in Hektropolis
+version: 2.1
+depend: [WorldGuard, WorldEdit]
+main: com.hektropolis.SpeedToggle.SpeedToggle
+
+commands:
+  superspeed:
+    description: Toggles superspeed
