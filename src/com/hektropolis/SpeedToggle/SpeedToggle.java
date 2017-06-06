@@ -55,7 +55,7 @@ public class SpeedToggle extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void disableSpeed(PlayerMoveEvent e) { //disable effect if player steps out of the mall
+    public void outOfBounds(PlayerMoveEvent e) { //disable effect if player steps out of the mall
         Player p = e.getPlayer();
 
         if (getRegionName(p, e.getFrom()).equals("mall")
