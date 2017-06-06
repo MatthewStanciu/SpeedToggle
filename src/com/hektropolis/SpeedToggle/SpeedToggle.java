@@ -6,12 +6,14 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -58,16 +60,15 @@ public class SpeedToggle extends JavaPlugin implements Listener {
 
     PotionEffect superspeed = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 10);
 
-    public void removePotionEffect(Player p) {
-        for (PotionEffect e : p.getActivePotionEffects()) {
-            /*if (e.getType() == superspeed.getType()
-                    && e.getAmplifier() == superspeed.getAmplifier()) {*/
-                p.removePotionEffect(e.getType());
-            //}
+    public boolean hasSpeed(Player p) {
+        if (p.hasPotionEffect(PotionEffectType.SPEED)) {
+            for (PotionEffect e : p.getActivePotionEffects()) {
+                if (e.getAmplifier() == superspeed.getAmplifier()) {
+                    return true;
+                }
+            }
         }
-        if (getRegionName(p, p.getLocation()).equals("city")) {
-            p.sendMessage(ChatColor.RED + "Your super speed effect was removed because it can only be used in the mall.");
-        }
+        return false;
     }
 
     @EventHandler
@@ -76,8 +77,9 @@ public class SpeedToggle extends JavaPlugin implements Listener {
 
         if (getRegionName(p, e.getFrom()).equals("mall")
                 && getRegionName(p, e.getTo()).equals("city")
-                && p.hasPotionEffect(PotionEffectType.SPEED)) {
-            removePotionEffect(p);
+                && hasSpeed(p)) {
+            p.removePotionEffect(PotionEffectType.SPEED);
+            p.sendMessage(ChatColor.RED + "Your super speed effect was removed because it can only be used in the mall.");
         }
     }
 
@@ -88,25 +90,23 @@ public class SpeedToggle extends JavaPlugin implements Listener {
             if (!(getRegionName(p, p.getLocation()).equals("mall"))) {
                 p.sendMessage(ChatColor.RED + "The superspeed command can only be used in the mall!");
                 return false;
-            } else { /*
-                for (PotionEffect e : p.getActivePotionEffects()) {
-                    if (e.getType() == superspeed.getType()
-                            && e.getAmplifier() == superspeed.getAmplifier()) {
-                        p.removePotionEffect(e.getType());
-                        p.sendMessage(ChatColor.GREEN + "You are no longer going super speedy!");
+            } else {
+                if (p.hasPotionEffect(PotionEffectType.SPEED)) {
+                    for (PotionEffect e : p.getActivePotionEffects()) {
+                        if (e.getAmplifier() == superspeed.getAmplifier()) {
+                            p.removePotionEffect(PotionEffectType.SPEED);
+                            p.sendMessage(ChatColor.GREEN + "You are no longer going super speedy!");
+                            break;
+                        }
+                        else {
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 10));
+                            p.sendMessage(ChatColor.GREEN + "You are now going super speedy!");
+                            break;
+                        }
                     }
-                    else {
-                        p.addPotionEffect(superspeed);
-                        p.sendMessage(ChatColor.GREEN + "You are now going super speedy!");
-                        break;
-                    }
-                }*/
-                if (!(p.getActivePotionEffects().contains(superspeed))) {
-                    p.addPotionEffect(superspeed);
+                } else {
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 10));
                     p.sendMessage(ChatColor.GREEN + "You are now going super speedy!");
-                }
-                else {
-                    removePotionEffect(p);
                 }
             }
         }
